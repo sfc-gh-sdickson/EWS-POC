@@ -1,13 +1,16 @@
 /*=============================================================================
   EWS POC - UC02 Step 6: Exactly-Once Validation Queries
   
-  PURPOSE: Prove that Snowpipe Streaming delivers exactly-once semantics
-           and maintains event-time ordering even with duplicates and
-           late-arriving events.
+  PURPOSE: Prove that Kinesis Firehose → Snowpipe AUTO_INGEST → Silver DT
+           delivers exactly-once semantics via file-level deduplication
+           (Snowpipe) and row-level deduplication (Silver Dynamic Table).
   
-  SNOWFLAKE ADVANTAGE: Offset-based exactly-once delivery is built into the
-  SDK — no Kafka transaction fencing, no consumer group coordination,
-  no idempotent producer configuration needed.
+  ARCHITECTURE:
+    Firehose at-least-once → Bronze (may have dupes) → Silver DT (deduped)
+  
+  SNOWFLAKE ADVANTAGE: Snowpipe provides file-level exactly-once (won't
+  re-load the same file). Silver Dynamic Table provides row-level dedup
+  via QUALIFY ROW_NUMBER() — all declarative, no custom code.
 =============================================================================*/
 
 USE ROLE EWS_ANALYST;
@@ -16,29 +19,36 @@ USE SCHEMA BRONZE;
 USE WAREHOUSE ews_analytics_wh;
 
 -- =============================================================================
--- 1. EXACTLY-ONCE PROOF: Check for duplicate event_ids
--- Expected: Each event_id appears exactly once despite triple-sending
+-- 1. BRONZE LAYER: Check raw data (may contain duplicates from Firehose at-least-once)
 -- =============================================================================
 
 SELECT
-    'DUPLICATE CHECK' AS test_name,
+    'BRONZE RAW CHECK' AS test_name,
     COUNT(*) AS total_rows,
     COUNT(DISTINCT event_id) AS unique_events,
+    COUNT(*) - COUNT(DISTINCT event_id) AS duplicate_rows,
     CASE
-        WHEN COUNT(*) = COUNT(DISTINCT event_id) THEN 'PASS: Exactly-once confirmed'
-        ELSE 'FAIL: Duplicates detected (' || (COUNT(*) - COUNT(DISTINCT event_id)) || ' dupes)'
+        WHEN COUNT(*) > COUNT(DISTINCT event_id) THEN 'EXPECTED: Bronze has duplicates (Firehose at-least-once)'
+        ELSE 'No duplicates in Bronze (clean delivery)'
     END AS result
 FROM BRONZE.STREAMING_EVENTS
 WHERE event_id LIKE 'DUP-%';
 
--- Detail: Show any event_ids that appear more than once
+-- =============================================================================
+-- 2. SILVER LAYER: Verify deduplication (exactly-once after DT processing)
+-- Expected: Each event_id appears exactly once in Silver
+-- =============================================================================
+
 SELECT
-    event_id,
-    COUNT(*) AS occurrence_count
-FROM BRONZE.STREAMING_EVENTS
-WHERE event_id LIKE 'DUP-%'
-GROUP BY event_id
-HAVING COUNT(*) > 1;
+    'SILVER DEDUP CHECK' AS test_name,
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT event_id) AS unique_events,
+    CASE
+        WHEN COUNT(*) = COUNT(DISTINCT event_id) THEN 'PASS: Silver has exactly-once (DT dedup working)'
+        ELSE 'FAIL: Silver has duplicates (' || (COUNT(*) - COUNT(DISTINCT event_id)) || ' extra rows)'
+    END AS result
+FROM SILVER.DEDUP_EVENTS
+WHERE event_id LIKE 'DUP-%';
 
 -- =============================================================================
 -- 2. EVENT-TIME ORDERING: Verify late-arriving events are queryable and ordered
@@ -74,43 +84,39 @@ WHERE event_id LIKE 'LATE-%'
 ORDER BY event_time;
 
 -- =============================================================================
--- 3. BURST HANDLING: Verify all burst events landed
--- Expected: All 500 burst events present
+-- 3. BURST HANDLING: Verify all burst events landed in Bronze
+-- Expected: All 1000 burst events present in Bronze
 -- =============================================================================
 
 SELECT
     'BURST CHECK' AS test_name,
     COUNT(*) AS burst_events_received,
-    500 AS burst_events_sent,
+    1000 AS burst_events_sent,
     CASE
-        WHEN COUNT(*) = 500 THEN 'PASS: All burst events landed'
-        ELSE 'FAIL: Missing ' || (500 - COUNT(*)) || ' events'
+        WHEN COUNT(*) >= 1000 THEN 'PASS: All burst events landed'
+        ELSE 'PENDING: ' || (1000 - COUNT(*)) || ' events not yet loaded (check Firehose buffer)'
     END AS result,
     MIN(event_time) AS first_event,
-    MAX(event_time) AS last_event,
-    TIMESTAMPDIFF('millisecond', MIN(event_time), MAX(event_time)) AS burst_span_ms
+    MAX(event_time) AS last_event
 FROM BRONZE.STREAMING_EVENTS
 WHERE event_id LIKE 'BURST-%';
 
 -- =============================================================================
--- 4. LATENCY MEASUREMENT: Ingest-to-queryable latency
--- Measures how quickly streaming data becomes available for queries
+-- 4. LATENCY MEASUREMENT: Firehose-to-queryable latency
+-- Measures end-to-end: event_time → Firehose buffer → S3 → Snowpipe → queryable
+-- Expected: 2-6 minutes depending on Firehose buffer interval
 -- =============================================================================
 
 SELECT
-    'LATENCY CHECK' AS test_name,
+    'E2E LATENCY' AS test_name,
     COUNT(*) AS sample_size,
-    AVG(TIMESTAMPDIFF('millisecond', event_time, _ingest_time)) AS avg_latency_ms,
-    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY
-        TIMESTAMPDIFF('millisecond', event_time, _ingest_time)
-    ) AS p50_latency_ms,
-    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY
-        TIMESTAMPDIFF('millisecond', event_time, _ingest_time)
-    ) AS p95_latency_ms,
-    PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY
-        TIMESTAMPDIFF('millisecond', event_time, _ingest_time)
-    ) AS p99_latency_ms,
-    MAX(TIMESTAMPDIFF('millisecond', event_time, _ingest_time)) AS max_latency_ms
+    ROUND(AVG(TIMESTAMPDIFF('second', event_time, _ingest_time)), 0) AS avg_latency_sec,
+    ROUND(MIN(TIMESTAMPDIFF('second', event_time, _ingest_time)), 0) AS min_latency_sec,
+    ROUND(MAX(TIMESTAMPDIFF('second', event_time, _ingest_time)), 0) AS max_latency_sec,
+    CASE
+        WHEN AVG(TIMESTAMPDIFF('second', event_time, _ingest_time)) < 360 THEN 'GOOD: Under 6 minutes'
+        ELSE 'CHECK: Latency exceeds 6 minutes (verify Firehose buffer interval)'
+    END AS assessment
 FROM BRONZE.STREAMING_EVENTS
 WHERE event_id LIKE 'BURST-%'
   AND _ingest_time >= DATEADD('hour', -1, CURRENT_TIMESTAMP());
