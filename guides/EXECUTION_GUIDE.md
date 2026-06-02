@@ -245,13 +245,15 @@ Execute tags, policies, masking, sharing, and marketplace statements.
 
 ## Phase 8: Cortex AI (UC13-14)
 
-### Step 8.1: Deploy Semantic Model
+### Step 8.1: Deploy Semantic View
 ```
-File: 08_cortex_ai/01_semantic_model.yaml
+File: 08_cortex_ai/01_semantic_view_ddl.sql
+Role: ACCOUNTADMIN
 ```
-Upload to a Snowflake stage:
+The semantic view `EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS` is created directly via DDL (no staging required). Run the CREATE SEMANTIC VIEW statement from the file, or verify it already exists:
 ```sql
-PUT file://08_cortex_ai/01_semantic_model.yaml @EWS_POC.ANALYTICS.SEMANTIC_STAGE;
+SHOW SEMANTIC VIEWS IN SCHEMA EWS_POC.ANALYTICS;
+SHOW SEMANTIC METRICS IN EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS;
 ```
 
 ### Step 8.2: Test Cortex Analyst

@@ -27,6 +27,7 @@ All 10 use cases in the EWS Proof of Concept have been successfully deployed and
 | Dynamic Tables | 9 total (4 Silver + 4 Gold + 1 Feature Store) | ACTIVE, REFRESHING |
 | Governance | Tags, masking policies, data share | CREATED |
 | Cortex AI | LLM functions (mistral-large2) | OPERATIONAL |
+| Semantic View | EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS (4 tables, 12 metrics, 16 dims) | DEPLOYED |
 
 ---
 
@@ -145,6 +146,10 @@ All 10 use cases in the EWS Proof of Concept have been successfully deployed and
 
 | Test | Input | Output | Status |
 |------|-------|--------|--------|
+| Semantic View Creation | CREATE SEMANTIC VIEW with 4 tables, 12 metrics, 16 dimensions | Successfully created | PASS |
+| Cortex Analyst NL Query | "How many fraud signals by severity?" | Correct SQL generated and executed | PASS |
+| Cortex Analyst Multi-Table | "Which institutions have highest volume?" | Correct join + ORDER BY DESC LIMIT 10 | PASS |
+| AI_SQL_GENERATION | Instructions to ROUND and LIMIT | Applied correctly in generated SQL | PASS |
 | Pipeline Generation | "Write a Silver zone DT for RAW_TRANSACTIONS" | Valid CREATE TABLE SQL generated | PASS |
 | Executive Summary | Fraud signal data → 3-sentence summary | Coherent business narrative | PASS |
 | Model Used | mistral-large2 | Operational | PASS |
@@ -192,6 +197,7 @@ Database: EWS_POC
 ├── External Volume: ews_iceberg_vol
 ├── Iceberg Tables: 5 (Bronze zone)
 ├── Dynamic Tables: 9 (Silver + Gold + Feature Store)
+├── Semantic View: 1 (EWS_FRAUD_ANALYTICS - 4 tables, 12 metrics, 16 dimensions)
 ├── Tags: 2 (SENSITIVITY, DATA_DOMAIN)
 ├── Masking Policies: 2 (MASK_PII, MASK_EMAIL)
 └── Data Share: 1 (ews_fraud_signals_share)
@@ -205,7 +211,7 @@ Database: EWS_POC
 2. **Enable Kinesis Firehose** with actual event stream for UC02 latency measurement
 3. **Configure SSO** with EWS IdP for UC10 BI tool connectivity
 4. **Mount Marketplace listings** (sanctions, geolocation) for UC11 demonstration
-5. **Deploy Semantic Model** to a stage for full Cortex Analyst REST API testing (UC13)
+5. **Deploy Semantic View** directly as DDL (no staged YAML file needed) for full Cortex Analyst REST API testing (UC13)
 6. **Create Git Integration** with EWS GitHub for UC14 CI/CD gate demonstration
 
 ---
