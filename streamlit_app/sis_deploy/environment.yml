@@ -1,0 +1,4 @@
+[tool.streamlit]
+
+[tool.snowflake.environments]
+default = {database = "EWS_POC", schema = "ANALYTICS", warehouse = "EWS_ANALYTICS_WH"}
