@@ -68,10 +68,12 @@ def main():
     print()
 
     # Initialize client
+    # NOTE: Uses Semantic View (not staged YAML file)
+    # The semantic view EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS is deployed directly
     client = CortexAnalystClient(
         account="<ACCOUNT_IDENTIFIER>",
         token="<OAUTH_TOKEN>",  # Or use session token
-        semantic_model_file="@EWS_POC.ANALYTICS.SEMANTIC_STAGE/01_semantic_model.yaml",
+        semantic_model_file="EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS",  # Semantic View FQN
     )
 
     # ==========================================================================
