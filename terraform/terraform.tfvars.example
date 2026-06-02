@@ -1,0 +1,18 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Snowflake Connection
+snowflake_organization = "MYORG"
+snowflake_account      = "AWS161"
+snowflake_user         = "SNOWMAN"
+snowflake_password     = "CHANGE_ME"
+
+# AWS Configuration
+aws_account_id   = "131247365247"
+s3_bucket_name   = "snowflakebuckets"
+aws_iam_role_arn = "arn:aws:iam::131247365247:role/storage_integration_role"
+s3_iceberg_path  = "ews_poc/iceberg/"
+
+# Deployment
+environment            = "poc"
+warehouse_size         = "MEDIUM"
+analytics_max_clusters = 3

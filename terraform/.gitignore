@@ -1,0 +1,15 @@
+# Terraform state and provider files
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+
+# Sensitive variable files
+terraform.tfvars
+*.auto.tfvars
+
+# Plan files
+*.tfplan
+
+# OS files
+.DS_Store
