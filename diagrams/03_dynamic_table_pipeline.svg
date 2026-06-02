@@ -1,5 +1,5 @@
 <svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">UC03: Declarative Pipeline — Dynamic Tables</text>
+  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">UC03: Declarative Pipeline &#8212; Dynamic Tables</text>
   <text x="450" y="50" text-anchor="middle" font-size="11" fill="#666">No orchestrator. No DAG definition. No cron. Snowflake infers and schedules everything.</text>
   <rect x="30" y="80" width="180" height="140" rx="8" fill="#fff8e1" stroke="#f57f17" stroke-width="2"/>
   <text x="120" y="102" text-anchor="middle" font-size="12" font-weight="bold" fill="#f57f17">BRONZE</text>
@@ -41,9 +41,9 @@
   <text x="835" y="180" text-anchor="middle" font-size="8" font-weight="bold" fill="#4527a0">Share</text>
   <rect x="30" y="240" width="845" height="95" rx="6" fill="#f5f5f5" stroke="#757575" stroke-width="1"/>
   <text x="50" y="262" font-size="10" font-weight="bold" fill="#1565c0">Why Dynamic Tables (not dbt + Airflow):</text>
-  <text x="50" y="280" font-size="9" fill="#333">1. Declarative: Define WHAT, not HOW — Snowflake handles scheduling, ordering, and incremental logic</text>
-  <text x="50" y="296" font-size="9" fill="#333">2. Auto-DAG: Dependencies inferred from SQL references — no manual DAG definition or YAML configs</text>
+  <text x="50" y="280" font-size="9" fill="#333">1. Declarative: Define WHAT, not HOW &#8212; Snowflake handles scheduling, ordering, and incremental logic</text>
+  <text x="50" y="296" font-size="9" fill="#333">2. Auto-DAG: Dependencies inferred from SQL references &#8212; no manual DAG definition or YAML configs</text>
   <text x="50" y="312" font-size="9" fill="#333">3. Snapshot-consistent: Downstream always reads a coherent point-in-time view of upstream data</text>
-  <text x="50" y="328" font-size="9" fill="#333">4. Incremental by default: Only processes changed rows — no custom merge logic or partition sensing</text>
+  <text x="50" y="328" font-size="9" fill="#333">4. Incremental by default: Only processes changed rows &#8212; no custom merge logic or partition sensing</text>
   <defs><marker id="arr3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#333"/></marker></defs>
 </svg>
