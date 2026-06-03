@@ -273,6 +273,44 @@ Execute LLM pipeline generation and Git integration setup.
 
 ---
 
+## Extra: Advanced Capabilities
+
+### Step E1: Cortex Agent
+```
+File: 08_cortex_ai/04_cortex_agent.sql
+Role: ACCOUNTADMIN
+```
+1. Creates `ANALYTICS.ALERTS_FOR_SEARCH` (materialized copy for change tracking)
+2. Creates Cortex Search Service `ANALYTICS.ALERT_SEARCH`
+3. Creates Cortex Agent `ANALYTICS.EWS_FRAUD_AGENT` with two tools
+4. Verify: `SHOW AGENTS IN SCHEMA EWS_POC.ANALYTICS`
+
+### Step E2: Anomaly Detection
+```
+File: 05_feature_store/03_anomaly_detection.sql
+Role: ACCOUNTADMIN
+```
+1. Creates training/detection views splitting data at -7 days
+2. Trains `ANALYTICS.SPENDING_ANOMALY_MODEL`
+3. Creates `GOLD.SPENDING_ANOMALIES` table with flagged days
+4. Verify: `SELECT * FROM GOLD.SPENDING_ANOMALIES WHERE IS_ANOMALY = TRUE`
+
+### Step E3: Streamlit App Update
+The Streamlit app now has 6 tabs (added Lineage + Cost). Uploaded via Python procedure:
+```sql
+CALL EWS_POC.ANALYTICS.WRITE_STREAMLIT_APP();
+```
+Verify by loading the app in Snowsight and checking all 6 tabs render.
+
+### Step E4: Verified Queries
+The Semantic View was recreated with 10 verified queries. Verify:
+```sql
+DESCRIBE SEMANTIC VIEW EWS_POC.ANALYTICS.EWS_FRAUD_ANALYTICS;
+-- Look for object_kind = 'VERIFIED_QUERY'
+```
+
+---
+
 ## Validation Checklist
 
 After completing all phases:
@@ -291,3 +329,8 @@ After completing all phases:
 - [ ] Data Share created and accessible
 - [ ] Cortex Analyst answering NL questions
 - [ ] LLM generating pipeline code from SQL
+- [ ] EXTRA: Cortex Agent responding with both SQL and search results
+- [ ] EXTRA: Anomaly detection model trained and detecting outliers
+- [ ] EXTRA: Streamlit Lineage tab showing pipeline dependencies
+- [ ] EXTRA: Streamlit Cost tab showing warehouse credits
+- [ ] EXTRA: 10 Verified Queries in Semantic View

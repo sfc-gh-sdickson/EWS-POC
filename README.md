@@ -206,9 +206,74 @@ This Proof of Concept demonstrates that Snowflake delivers a **complete, unified
 7. Analytics warehouse + workloads (UC09)
 8. Governance + sharing (UC10-11)
 9. Cortex AI (UC13-14)
+10. EXTRA: Cortex Agent + Anomaly Detection + Lineage/Cost + Verified Queries
 ```
 
 Each numbered directory in this project corresponds to a deployment phase. Scripts within each directory are numbered and must be executed in order.
+
+---
+
+## Extra: Advanced Capabilities
+
+The following capabilities extend beyond the original 10 use cases, demonstrating additional Snowflake competitive advantages.
+
+### Extra 1: Cortex Agent — Multi-Tool AI Orchestration
+
+**Requirement:** A single conversational interface that routes between structured analytics (SQL) and unstructured search (alert text) without external orchestration.
+
+![Extra: Cortex Agent](diagrams/07_cortex_agent.svg)
+
+**Snowflake Capabilities Deployed:**
+- Cortex Agent with auto model selection
+- Semantic View tool (NL-to-SQL on Gold tables)
+- Cortex Search Service tool (semantic search on alert descriptions)
+- 10 Verified Queries for demo reliability
+
+**What competitors would need:** LangChain/CrewAI + external LLM (OpenAI/Anthropic API) + vector database (Pinecone/Weaviate) + custom routing logic + RAG pipeline.
+
+---
+
+### Extra 2: Anomaly Detection — Native ML from SQL
+
+**Requirement:** Detect unusual spending patterns that may indicate fraud, system errors, or operational anomalies — without external ML infrastructure.
+
+![Extra: Anomaly Detection](diagrams/08_anomaly_detection.svg)
+
+**Snowflake Capabilities Deployed:**
+- `SNOWFLAKE.ML.ANOMALY_DETECTION` — train from SQL
+- `DETECT_ANOMALIES()` — infer from SQL
+- Gradient Boosting Machine with auto-differencing
+- Results stored in Gold layer for downstream consumption
+
+**What competitors would need:** Spark ML pipelines + MLflow model registry + external GPU cluster + data export for training + custom monitoring + separate serving infrastructure.
+
+---
+
+### Extra 3: Data Lineage + Cost Observability
+
+**Requirement:** End-to-end pipeline traceability and per-stage cost attribution visible in a single dashboard.
+
+![Extra: Lineage & Cost](diagrams/09_lineage_cost.svg)
+
+**Snowflake Capabilities Deployed:**
+- `SNOWFLAKE.ACCOUNT_USAGE.OBJECT_DEPENDENCIES` for lineage
+- `SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` for cost
+- Streamlit-in-Snowflake tabs for live visualization
+- Per-warehouse cost attribution (ingest, transform, analytics, AI)
+
+**What competitors would need:** Collibra/DataHub for lineage + custom cost dashboards + CloudWatch/Datadog integration + manual tag-to-cost mapping.
+
+---
+
+### Extra: Competitive Summary (Advanced Capabilities)
+
+| Capability | Snowflake (This POC) | What Competitors Need |
+|-----------|---------------------|----------------------|
+| **Cortex Agent** | CREATE AGENT (native, multi-tool) | LangChain + External LLM + Vector DB + RAG |
+| **Anomaly Detection** | `SNOWFLAKE.ML.ANOMALY_DETECTION` (SQL) | Spark ML + MLflow + GPU cluster |
+| **Data Lineage** | `ACCOUNT_USAGE.OBJECT_DEPENDENCIES` (native) | Collibra/DataHub ($$$) |
+| **Cost Attribution** | `WAREHOUSE_METERING_HISTORY` (per-warehouse) | CloudWatch + custom dashboards |
+| **Verified Queries** | `AI_VERIFIED_QUERIES` (in Semantic View) | Custom prompt engineering + evaluation harness |
 
 ---
 
@@ -222,10 +287,15 @@ EWS POC/
 ├── 02_batch_ingestion/                (UC01: COPY INTO, DMFs, dead letter)
 ├── 03_streaming/                      (UC02: Snowpipe Streaming SDK)
 ├── 04_pipeline/                       (UC03: Dynamic Tables + quality gates)
-├── 05_feature_store/                  (UC04-05: online/offline features)
+├── 05_feature_store/                  (UC04-05: online/offline features + anomaly detection)
 ├── 06_analytics_perf/                 (UC09: multi-cluster, time travel)
 ├── 07_self_service/                   (UC10-11: Horizon, sharing, marketplace)
-└── 08_cortex_ai/                      (UC13-14: Analyst, Agents, Git)
+├── 08_cortex_ai/                      (UC13-14: Analyst, Agents, Git, Cortex Agent)
+├── 09_future_enhancements/            (Sub-second freshness architecture)
+├── diagrams/                          (SVG architecture diagrams)
+├── guides/                            (Execution guide, deployment schedule, test report)
+├── streamlit_app/                     (Streamlit-in-Snowflake source)
+└── terraform/                         (Infrastructure as Code)
 ```
 
 ---

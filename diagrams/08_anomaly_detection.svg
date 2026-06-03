@@ -1,0 +1,33 @@
+<svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">EXTRA: Anomaly Detection — Native ML from SQL</text>
+  <text x="450" y="50" text-anchor="middle" font-size="11" fill="#666">Train and detect anomalies without leaving Snowflake. No Spark. No MLflow. No external compute.</text>
+  <rect x="30" y="75" width="200" height="100" rx="6" fill="#e0f2f1" stroke="#00695c" stroke-width="1.5"/>
+  <text x="130" y="95" text-anchor="middle" font-size="10" font-weight="bold" fill="#00695c">GOLD.DAILY_MEMBER_SUMMARY</text>
+  <text x="130" y="115" text-anchor="middle" font-size="8" fill="#333">497K rows | 90 days</text>
+  <text x="130" y="130" text-anchor="middle" font-size="8" fill="#333">Daily spend aggregates</text>
+  <text x="130" y="145" text-anchor="middle" font-size="8" fill="#333">per member per institution</text>
+  <rect x="50" y="152" width="160" height="15" rx="3" fill="#c8e6c9" stroke="#2e7d32"/>
+  <text x="130" y="163" text-anchor="middle" font-size="7" fill="#1b5e20">Training: all except last 7 days</text>
+  <path d="M235 125 L295 125" stroke="#333" stroke-width="2" marker-end="url(#arr8)"/>
+  <rect x="300" y="75" width="250" height="100" rx="8" fill="#ede7f6" stroke="#4527a0" stroke-width="2"/>
+  <text x="425" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#4527a0">SNOWFLAKE.ML.ANOMALY_DETECTION</text>
+  <rect x="315" y="105" width="220" height="20" rx="3" fill="#ffffff" stroke="#4527a0"/>
+  <text x="425" y="119" text-anchor="middle" font-size="8" fill="#333">Gradient Boosting Machine (GBM)</text>
+  <rect x="315" y="130" width="220" height="20" rx="3" fill="#ffffff" stroke="#4527a0"/>
+  <text x="425" y="144" text-anchor="middle" font-size="8" fill="#333">Auto-differencing + cyclic features</text>
+  <rect x="315" y="155" width="220" height="15" rx="3" fill="#d1c4e9" stroke="#4527a0"/>
+  <text x="425" y="166" text-anchor="middle" font-size="7" fill="#311b92">One SQL command to train</text>
+  <path d="M555 125 L615 125" stroke="#333" stroke-width="2" marker-end="url(#arr8)"/>
+  <rect x="620" y="75" width="250" height="100" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+  <text x="745" y="95" text-anchor="middle" font-size="10" font-weight="bold" fill="#e65100">GOLD.SPENDING_ANOMALIES</text>
+  <text x="745" y="115" text-anchor="middle" font-size="8" fill="#333">IS_ANOMALY = TRUE flagged days</text>
+  <text x="745" y="135" text-anchor="middle" font-size="8" fill="#333">FORECAST vs ACTUAL comparison</text>
+  <text x="745" y="150" text-anchor="middle" font-size="8" fill="#333">UPPER_BOUND / LOWER_BOUND</text>
+  <text x="745" y="165" text-anchor="middle" font-size="8" fill="#333">PERCENTILE + DISTANCE scores</text>
+  <rect x="30" y="195" width="840" height="30" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1"/>
+  <text x="450" y="215" text-anchor="middle" font-size="10" font-weight="bold" fill="#2e7d32">Snowflake Advantage: CREATE SNOWFLAKE.ML.ANOMALY_DETECTION → DETECT_ANOMALIES() — all in SQL, no data movement</text>
+  <rect x="30" y="235" width="840" height="35" rx="6" fill="#ffebee" stroke="#c62828" stroke-width="1"/>
+  <text x="450" y="252" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">ELIMINATED:</text>
+  <text x="450" y="265" text-anchor="middle" font-size="9" fill="#c62828">Spark ML pipelines | MLflow model registry | External GPU cluster | Data export for training | Custom monitoring</text>
+  <defs><marker id="arr8" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#333"/></marker></defs>
+</svg>
